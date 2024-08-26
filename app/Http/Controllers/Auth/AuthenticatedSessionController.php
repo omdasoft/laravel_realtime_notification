@@ -35,10 +35,10 @@ class AuthenticatedSessionController extends Controller
         
         //If user is admin, navitae him to admin dashboard
         if (Auth::user()->isAdmin) {
-            return redirect()->intended(route('admin-dashboard', absolute: false));
+            return redirect()->intended(route('admin.dashboard', absolute: false));
         } 
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('user.dashboard', absolute: false));
     }
 
     /**
