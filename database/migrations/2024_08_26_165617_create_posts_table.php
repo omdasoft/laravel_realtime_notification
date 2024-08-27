@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('slug');
             $table->text('body');
             $table->string('image_url')->nullable();
+            $table->enum('status', ['pending','approved','rejected'])->default('pending'); 
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });

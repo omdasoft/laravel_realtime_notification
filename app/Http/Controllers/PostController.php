@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Inertia\Inertia;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -12,7 +13,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('User/Post/Index', ['posts' => auth()->user()->posts]);
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,8 @@ Route::group(['prefix' => '/user', 'as' => 'user.', 'middleware' => ['auth', 've
     Route::get('/dashboard', function () {
         return Inertia::render('User/Dashboard');
     })->name('dashboard');
+
+    Route::resource('posts', PostController::class);
 });
 
 Route::middleware('auth')->group(function () {
