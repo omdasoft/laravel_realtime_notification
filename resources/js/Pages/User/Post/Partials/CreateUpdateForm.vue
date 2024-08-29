@@ -24,9 +24,23 @@ const form = useForm({
   image: "",
 });
 
+function submitPost() {
+  form.post(route("user.posts.store"), {
+    onSuccess: () => {
+      closeModal()
+    }
+  });
+}
+
+function handleFileUpload(event) {
+  form.image = event.target.files[0];
+}
+
 const emit = defineEmits(["close"]);
 
 function closeModal() {
+  form.clearErrors();
+  form.reset();
   emit("close");
 }
 </script>
@@ -36,63 +50,60 @@ function closeModal() {
       <div class="p-6">
         <h2 class="text-lg font-medium text-gray-900">Create Post</h2>
 
-        <!--Post Title-->
-        <div class="mt-6">
-          <InputLabel for="title" value="Title" class="sr-only" />
+        <form @submit.prevent="submitPost" enctype="multipart/form-data">
+          <div>
+            <!--Post Title-->
+            <div class="mt-6">
+              <InputLabel for="title" value="Title" class="sr-only" />
 
-          <TextInput
-            id="title"
-            ref="title"
-            v-model="form.title"
-            type="text"
-            class="mt-1 block w-3/4"
-            placeholder="Title"
-          />
-          <InputError :message="form.errors.title" class="mt-2" />
-        </div>
+              <TextInput
+                id="title"
+                ref="title"
+                v-model="form.title"
+                type="text"
+                class="mt-1 block w-3/4"
+                placeholder="Title"
+              />
+              <InputError :message="form.errors.title" class="mt-2" />
+            </div>
 
-        <!--Post Body-->
-        <div class="mt-6">
-          <InputLabel for="body" value="Body" class="sr-only" />
+            <!--Post Body-->
+            <div class="mt-6">
+              <InputLabel for="body" value="Body" class="sr-only" />
 
-          <TextArea
-            id="body"
-            ref="body"
-            v-model="form.body"
-            class="mt-1 block w-3/4"
-            placeholder="Body"
-          />
-        </div>
+              <TextArea
+                id="body"
+                ref="body"
+                v-model="form.body"
+                class="mt-1 block w-3/4"
+                placeholder="Body"
+              />
+              <InputError :message="form.errors.body" class="mt-2" />
+            </div>
 
-        <!--Post Image-->
-        <div class="mt-6">
-          <InputLabel for="Image" value="Image" class="sr-only" />
+            <!--Post Image-->
+            <div class="mt-6">
+              <InputLabel for="image" value="Image" class="sr-only" />
 
-          <TextInput
-            id="image"
-            ref="image"
-            v-model="form.image"
-            type="file"
-            class="mt-1 block w-3/4"
-          />
-          <InputError :message="form.errors.image" class="mt-2" />
-        </div>
+              <TextInput
+                id="image"
+                ref="image"
+                type="file"
+                class="mt-1 block w-3/4"
+                @change="handleFileUpload"
+              />
+              <InputError :message="form.errors.image" class="mt-2" />
+            </div>
 
-        <div class="mt-6 flex justify-end">
-          <SecondaryButton @click="closeModal"> Cancel </SecondaryButton>
-          <PrimaryButton class="ms-3">
-            Save
-          </PrimaryButton>
-
-        <!-- <DangerButton
-                class="ms-3"
-                :class="{ 'opacity-25': form.processing }"
-                :disabled="form.processing"
-                @click="deleteUser"
-              >
-                Delete Account
-        </DangerButton> -->
-        </div>
+            <div class="mt-6 flex justify-end">
+              <SecondaryButton @click="closeModal"> Cancel </SecondaryButton>
+              <PrimaryButton class="ms-3" :disabled="form.processing">
+                <span v-if="form.processing">Saving..</span>
+                <span v-else>Save</span>
+              </PrimaryButton>
+            </div>
+          </div>
+        </form>
       </div>
     </Modal>
   </section>

@@ -16,6 +16,10 @@ function displayModal() {
   showModal.value = true;
 }
 
+function imagePath(path) {
+  return '/storage/'+path;
+}
+
 function closeModal() {
   showModal.value = false;
 }
@@ -68,7 +72,7 @@ function closeModal() {
                       class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
                       <img
-                        :src="post.image_url"
+                        :src="imagePath(post.image_url)"
                         width="150"
                         height="150"
                         alt="post image"
