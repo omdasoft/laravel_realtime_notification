@@ -1,17 +1,21 @@
 <script setup>
 import AuthenticatedUserLayout from "@/Layouts/AuthenticatedUserLayout.vue";
-import { Head } from "@inertiajs/vue3";
+import { Head, router } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import DangerButton from "@/Components/DangerButton.vue";
 import StatusDadge from "@/Components/StatusDadge.vue";
 import { ref } from "vue";
 import CreateUpdateForm from "@/Pages/User/Post/Partials/CreateUpdateForm.vue";
+import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 
 defineProps({
   posts: Object,
 });
 
 const showModal = ref(false);
+const showConfirmModal = ref(false);
 const post = ref(null);
+const postId = ref(null);
 
 
 function displayModal() {
@@ -25,6 +29,24 @@ function imagePath(path) {
 function editPost(postObj) {
   post.value = postObj;
   showModal.value = true;
+}
+
+function deletePost() {
+  router.delete(`/user/posts/${postId.value}`, {
+    onSuccess: () => {
+      closeConfirmModal();
+    }
+  })
+}
+
+function confirmDelete(post) {
+  postId.value = post.id;
+  showConfirmModal.value = true;
+}
+
+function closeConfirmModal() {
+  postId.value = null;
+  showConfirmModal.value = false;
 }
 
 function closeModal() {
@@ -91,12 +113,10 @@ function closeModal() {
                       <StatusDadge :status="post.status" />
                     </td>
                     <td class="px-6 py-4">
-                      <a
-                        href="#"
-                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                      >
+                      <div class="flex gap-1">
                         <PrimaryButton @click.prevent="editPost(post)"> Edit </PrimaryButton>
-                      </a>
+                        <DangerButton @click.prevent="confirmDelete(post)">Delete</DangerButton>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
@@ -106,6 +126,7 @@ function closeModal() {
           </div>
         </div>
         <CreateUpdateForm :showModal="showModal" @close="closeModal" :post="post"/>
+        <ConfirmationModal :show="showConfirmModal" @closeConfirm="closeConfirmModal" @confirm="deletePost" title="Delete Post"></ConfirmationModal>
       </div>
     </div>
   </AuthenticatedUserLayout>

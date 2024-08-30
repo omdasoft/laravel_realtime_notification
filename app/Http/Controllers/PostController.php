@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Inertia\Inertia;
 use App\Http\Requests\PostStoreRequest;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\PostUpdateRequest;
 
 class PostController extends Controller
@@ -65,11 +66,14 @@ class PostController extends Controller
         return to_route('user.posts.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Post $post)
     {
-        //
+        if ($post->image_url) {
+            if (Storage::disk('public')->exists($post->image_url)) {
+                Storage::disk('public')->delete($post->image_url);
+            }
+        }
+        
+        $post->delete();
     }
 }
