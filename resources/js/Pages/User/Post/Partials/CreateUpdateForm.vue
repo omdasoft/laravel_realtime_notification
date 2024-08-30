@@ -7,28 +7,62 @@ import TextInput from "@/Components/TextInput.vue";
 import TextArea from "@/Components/TextArea.vue";
 import InputError from "@/Components/InputError.vue";
 import { Link, useForm, usePage } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 
 const props = defineProps({
   showModal: {
     type: Boolean,
     default: false,
   },
+  post: {
+    type: Object,
+    default: null,
+  },
 });
 
 // const user = usePage().props.auth.user;
-
+const isUpdate = ref(false);
+const postId = ref(null);
 const form = useForm({
   title: "",
   body: "",
   image: "",
+  _method: ""
 });
 
-function submitPost() {
-  form.post(route("user.posts.store"), {
-    onSuccess: () => {
-      closeModal()
+// Update form when post prop changes
+watch(
+  () => props.post,
+  (newPost) => {
+    if (newPost) {
+      form.title = newPost.title || "";
+      form.body = newPost.body || "";
+      form.image = "";
+      isUpdate.value = true;
+      postId.value = newPost.id;
+      form._method = "put";
+    } else {
+      form._method = "";
+      isUpdate.value = false;
+      postId.value = null;
     }
+  },
+  { immediate: true }
+);
+
+function submitPost() {
+  const url = isUpdate.value 
+    ? route("user.posts.update", postId.value)
+    : route("user.posts.store");
+
+  if (!isUpdate.value) {
+    form._method = "";
+  }
+
+  form.post(url, {
+    onSuccess: () => {
+      closeModal();
+    },
   });
 }
 
@@ -41,6 +75,9 @@ const emit = defineEmits(["close"]);
 function closeModal() {
   form.clearErrors();
   form.reset();
+  isUpdate.value = false;
+  postId.value = null;
+  form._method = "";
   emit("close");
 }
 </script>
@@ -48,7 +85,10 @@ function closeModal() {
   <section class="space-y-6">
     <Modal :show="showModal" @close="closeModal">
       <div class="p-6">
-        <h2 class="text-lg font-medium text-gray-900">Create Post</h2>
+        <h2 class="text-lg font-medium text-gray-900">
+          <span v-if="!isUpdate">Create Post</span>
+          <span v-else>Update Post</span>
+        </h2>
 
         <form @submit.prevent="submitPost" enctype="multipart/form-data">
           <div>

@@ -11,6 +11,8 @@ defineProps({
 });
 
 const showModal = ref(false);
+const post = ref(null);
+
 
 function displayModal() {
   showModal.value = true;
@@ -18,6 +20,11 @@ function displayModal() {
 
 function imagePath(path) {
   return '/storage/'+path;
+}
+
+function editPost(postObj) {
+  post.value = postObj;
+  showModal.value = true;
 }
 
 function closeModal() {
@@ -88,7 +95,7 @@ function closeModal() {
                         href="#"
                         class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                       >
-                        <PrimaryButton> Edit </PrimaryButton>
+                        <PrimaryButton @click.prevent="editPost(post)"> Edit </PrimaryButton>
                       </a>
                     </td>
                   </tr>
@@ -98,7 +105,7 @@ function closeModal() {
             <p class="text-center py-3" v-else>No post yet</p>
           </div>
         </div>
-        <CreateUpdateForm :showModal="showModal" @close="closeModal"/>
+        <CreateUpdateForm :showModal="showModal" @close="closeModal" :post="post"/>
       </div>
     </div>
   </AuthenticatedUserLayout>

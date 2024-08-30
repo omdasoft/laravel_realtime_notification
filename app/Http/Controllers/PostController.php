@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\PostStoreRequest;
 use App\Models\Post;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Http\Requests\PostStoreRequest;
+use App\Http\Requests\PostUpdateRequest;
 
 class PostController extends Controller
 {
@@ -27,18 +27,19 @@ class PostController extends Controller
 
     public function store(PostStoreRequest $request)
     {
+        $validated = $request->validated();
         $post = new Post();
 
         if ($request->hasFile('image')) {
             $post->image_url = $request->file('image')->store('images', 'public');
         }
 
-        $post->title = $request->title;
-        $post->body = $request->body;
+        $post->title = $validated['title'];
+        $post->body = $validated['body'];
         $post->user_id = auth()->user()->id;
         $post->save();
 
-        return redirect(route('user.posts.index', absolute: true));
+        return to_route('user.posts.index');
     }
 
     /**
@@ -49,20 +50,19 @@ class PostController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Post $post)
+    public function update(PostUpdateRequest $request, Post $post)
     {
-        //
-    }
+        $validated = $request->validated();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Post $post)
-    {
-        //
+        if ($request->hasFile('image')) {
+            $post->image_url = $request->file('image')->store('images', 'public');
+        }
+
+        $post->title = $validated['title'];
+        $post->body = $validated['body'];
+        $post->save(); 
+
+        return to_route('user.posts.index');
     }
 
     /**
