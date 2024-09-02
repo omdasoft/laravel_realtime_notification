@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\User\PostController as AdminUserPostController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -19,7 +20,6 @@ Route::group(['prefix' => '/user', 'as' => 'user.', 'middleware' => ['auth', 've
     Route::get('/dashboard', function () {
         return Inertia::render('User/Dashboard');
     })->name('dashboard');
-
     Route::resource('posts', PostController::class);
 });
 
@@ -30,6 +30,13 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['auth', 'admin']], function() {
+    Route::group(['prefix' => '/users', 'as' => 'users.'], function() {
+        Route::group(['prefix' => '/posts', 'as' => 'posts.'], function() {
+            Route::get('/', [AdminUserPostController::class, 'index'])->name('index');
+            Route::post('/update-status/{post}', [AdminUserPostController::class, 'updateStatus'])->name('update-status');
+        });
+        // Route::resource('posts', AdminUserPostController::class);
+    });
     Route::get('/dashboard', function() {
         return Inertia::render('Admin/Dashboard');
     })->name('dashboard');

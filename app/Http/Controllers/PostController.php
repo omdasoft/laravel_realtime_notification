@@ -18,14 +18,6 @@ class PostController extends Controller
         return Inertia::render('User/Post/Index', ['posts' => auth()->user()->posts]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     public function store(PostStoreRequest $request)
     {
         $validated = $request->validated();
@@ -42,10 +34,7 @@ class PostController extends Controller
 
         return to_route('user.posts.index');
     }
-
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(Post $post)
     {
         //

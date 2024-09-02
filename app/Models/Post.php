@@ -30,12 +30,7 @@ class Post extends Model
     {
         return Carbon::parse($value)->diffForHumans();
     }
-
-    public function getStatusAttribute($value)
-    {
-        return ucfirst($value);
-    }
-
+    
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

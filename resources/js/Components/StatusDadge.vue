@@ -1,9 +1,9 @@
 <script setup>
 import {computed} from 'vue'
 
-const STATUS_PENDING = 'Pending';
-const STATUS_APPROVED = 'Approved';
-const STATUS_REJECTED = 'Rejected';
+const STATUS_PENDING = 'pending';
+const STATUS_APPROVED = 'approved';
+const STATUS_REJECTED = 'rejected';
 
 const props = defineProps({
     status: {
