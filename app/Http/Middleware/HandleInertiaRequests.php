@@ -43,7 +43,12 @@ class HandleInertiaRequests extends Middleware
 
     private function notifications()
     {
-        $notifications = auth()->user()->notifications;
+        $notifications = auth()->user()?->notifications;
+        
+        if (!$notifications) {
+            return null;
+        }
+
         return $this->transformNotifications($notifications);
     }
 
