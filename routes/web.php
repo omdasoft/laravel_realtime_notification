@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\User\PostController as AdminUserPostController;
@@ -30,16 +31,16 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['auth', 'admin']], function() {
+
     Route::group(['prefix' => '/users', 'as' => 'users.'], function() {
         Route::group(['prefix' => '/posts', 'as' => 'posts.'], function() {
             Route::get('/', [AdminUserPostController::class, 'index'])->name('index');
             Route::post('/update-status/{post}', [AdminUserPostController::class, 'updateStatus'])->name('update-status');
         });
-        // Route::resource('posts', AdminUserPostController::class);
     });
-    Route::get('/dashboard', function() {
-        return Inertia::render('Admin/Dashboard');
-    })->name('dashboard');
+
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/notifications', [AdminController::class, 'notifications'])->name('notifications');
 });
 
 require __DIR__.'/auth.php';

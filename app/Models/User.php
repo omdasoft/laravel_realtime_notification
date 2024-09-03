@@ -58,6 +58,11 @@ class User extends Authenticatable
         $query->where('isAdmin', 0);
     }
 
+    public function scopeAdmin(Builder $query)
+    {
+        $query->where('isAdmin', 1);
+    }
+
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);

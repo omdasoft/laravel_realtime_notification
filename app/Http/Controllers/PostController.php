@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Inertia\Inertia;
+use App\Events\NewPostCreatedEvent;
 use App\Http\Requests\PostStoreRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\PostUpdateRequest;
+use App\Models\User;
+use App\Notifications\NewPostCreated;
 
 class PostController extends Controller
 {
@@ -31,6 +34,9 @@ class PostController extends Controller
         $post->body = $validated['body'];
         $post->user_id = auth()->user()->id;
         $post->save();
+
+        //dispatch new post created event
+        event(new NewPostCreatedEvent($post));
 
         return to_route('user.posts.index');
     }

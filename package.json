@@ -15,6 +15,10 @@
         "postcss": "^8.4.31",
         "tailwindcss": "^3.2.1",
         "vite": "^5.0",
-        "vue": "^3.4.0"
+        "vue": "^3.4.38"
+    },
+    "dependencies": {
+        "feather-icons": "^4.29.2",
+        "vue-feather": "^2.0.0"
     }
 }
