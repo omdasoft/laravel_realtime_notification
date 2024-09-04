@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\NotificationsController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\User\PostController as AdminUserPostController;
@@ -32,12 +33,19 @@ Route::middleware('auth')->group(function () {
 
 Route::group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['auth', 'admin']], function() {
 
+    //users routes
     Route::group(['prefix' => '/users', 'as' => 'users.'], function() {
+
+        //user posts routes
         Route::group(['prefix' => '/posts', 'as' => 'posts.'], function() {
             Route::get('/', [AdminUserPostController::class, 'index'])->name('index');
             Route::post('/update-status/{post}', [AdminUserPostController::class, 'updateStatus'])->name('update-status');
+            Route::get('/{post}', [AdminUserPostController::class, 'show'])->name('show');
         });
     });
+
+    //Notifications
+    Route::post('/notifications/{id}/read', [NotificationsController::class, 'markAsRead'])->name('notifications.read');
 
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/notifications', [AdminController::class, 'notifications'])->name('notifications');

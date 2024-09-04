@@ -28,4 +28,10 @@ class PostController extends Controller
 
         return to_route('admin.users.posts.index');
     }
+
+    public function show(Post $post)
+    {
+        $post = $post::with('user')->first();
+        return Inertia::render('Admin/User/Post/Show', ['post' => $post]);
+    }
 }

@@ -3,6 +3,7 @@ import AuthenticatedAdminLayout from "@/Layouts/AuthenticatedAdminLayout.vue";
 import SuccessButton from "@/Components/SuccessButton.vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import StatusDadge from "@/Components/StatusDadge.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { Head, router } from "@inertiajs/vue3";
 import {computed, ref} from "vue";
 
@@ -22,6 +23,12 @@ function updateStatus(post) {
   });
 }
 
+function viewPost(post) {
+  router.get(`/admin/users/posts/${post.id}`, {
+    onError: () => console.log("error in displaying the user post"),
+  });
+}
+
 const filteredPosts = computed(() => {
     if (statusFilter.value === 'all') {
         return props.posts;
@@ -33,7 +40,7 @@ const filteredPosts = computed(() => {
 </script>
 
 <template>
-  <Head title="Dashboard" />
+  <Head title="User Posts" />
 
   <AuthenticatedAdminLayout>
     <template #header>
@@ -103,6 +110,9 @@ const filteredPosts = computed(() => {
                     </td>
                     <td class="px-6 py-4">
                       <div class="flex gap-1">
+                        <PrimaryButton @click.prevent="viewPost(post)">
+                          View
+                        </PrimaryButton>
                         <DangerButton
                           @click.prevent="updateStatus(post)"
                           v-if="post.status === 'approved'"

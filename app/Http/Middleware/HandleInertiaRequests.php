@@ -43,7 +43,7 @@ class HandleInertiaRequests extends Middleware
 
     private function notifications()
     {
-        $notifications = auth()->user()?->notifications;
+        $notifications = auth()->user()?->unreadNotifications;
         
         if (!$notifications) {
             return null;
@@ -61,6 +61,7 @@ class HandleInertiaRequests extends Middleware
                 if ($notification->type === NewPostCreated::class) {
                     $data['id'] = $notification->id;
                     $data['title'] = $notification->data['post_title'];
+                    $data['post_id'] = $notification->data['post_id'];
                     $data['date'] = Carbon::parse($notification->created_at)->diffForHumans();
                     $data['user'] = $notification->data['user_name'];
                     $notificationsArr[] = $data;
