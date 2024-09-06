@@ -4,18 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Inertia\Inertia;
-use App\Events\NewPostCreatedEvent;
 use App\Http\Requests\PostStoreRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\PostUpdateRequest;
-use App\Models\User;
-use App\Notifications\NewPostCreated;
+use App\Services\NotificationService;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct(private NotificationService $notificationService)
+    {}
+
     public function index()
     {
         return Inertia::render('User/Post/Index', ['posts' => auth()->user()->posts]);
@@ -35,17 +33,11 @@ class PostController extends Controller
         $post->user_id = auth()->user()->id;
         $post->save();
 
-        //dispatch new post created event
-        event(new NewPostCreatedEvent($post));
+        $this->notificationService->notifyAdminOfNewPost($post);
 
         return to_route('user.posts.index');
     }
     
-    public function show(Post $post)
-    {
-        //
-    }
-
     public function update(PostUpdateRequest $request, Post $post)
     {
         $validated = $request->validated();

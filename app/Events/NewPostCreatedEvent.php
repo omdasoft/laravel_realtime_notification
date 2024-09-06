@@ -2,37 +2,26 @@
 
 namespace App\Events;
 
-use App\Models\Post;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class NewPostCreatedEvent
+class NewPostCreatedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
-    public $post;
-    public function __construct(Post $post)
+    public $unreadNotifications;
+
+    public function __construct($unreadNotifications)
     {
-        $this->post = $post;
+        $this->unreadNotifications = $unreadNotifications;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-    public function broadcastOn(): array
+    public function broadcastOn(): Channel
     {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
+        return new PrivateChannel('admin-notifications');
     }
 }

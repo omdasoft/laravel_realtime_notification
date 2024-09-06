@@ -4,9 +4,7 @@ namespace App\Http\Middleware;
 
 use Inertia\Middleware;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use App\Notifications\NewPostCreated;
-use Illuminate\Database\Eloquent\Collection;
+use App\Services\NotificationService;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -32,43 +30,14 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $notificationService = new NotificationService();
+        $unredNotifications = $notificationService->getUnreadNotificationsForAdmin();
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
             ],
-            'notifications' => $this->notifications()
+            'notifications' => $unredNotifications
         ];
-    }
-
-    private function notifications()
-    {
-        $notifications = auth()->user()?->unreadNotifications;
-        
-        if (!$notifications) {
-            return null;
-        }
-
-        return $this->transformNotifications($notifications);
-    }
-
-    private function transformNotifications(Collection $notifications): array
-    {
-        $notificationsArr = [];
-
-        if (!$notifications->isEmpty()) {
-            foreach ($notifications as $notification) {
-                if ($notification->type === NewPostCreated::class) {
-                    $data['id'] = $notification->id;
-                    $data['title'] = $notification->data['post_title'];
-                    $data['post_id'] = $notification->data['post_id'];
-                    $data['date'] = Carbon::parse($notification->created_at)->diffForHumans();
-                    $data['user'] = $notification->data['user_name'];
-                    $notificationsArr[] = $data;
-                }
-            }
-        }
-
-        return $notificationsArr;
     }
 }

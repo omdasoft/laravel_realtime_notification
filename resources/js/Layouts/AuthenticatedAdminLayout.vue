@@ -1,15 +1,23 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
-import { Link, usePage } from "@inertiajs/vue3";
+import { Link, usePage, router } from "@inertiajs/vue3";
 import Notification from "@/Components/Notification.vue";
 const showingNavigationDropdown = ref(false);
 
-const notifications = usePage().props.notifications;
+const notifications = ref([]);
+
+onMounted(() => {
+  notifications.value = usePage().props.notifications;
+  Echo.private(`admin-notifications`)
+    .listen('NewPostCreatedEvent', (e) => {
+        notifications.value.push(e.unreadNotifications);
+    });
+})
 </script>
 <template>
   <div>
