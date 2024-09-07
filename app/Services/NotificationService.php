@@ -12,15 +12,20 @@ class NotificationService {
     public function notifyAdminOfNewPost(Post $post)
     {
         $admin = User::admin()->first();
+
         if ($admin) {
             $admin->notify(new NewPostCreated($post));
-            $notification = $admin->unreadNotifications()->latest()->first();
 
-            if ($notification) {
-                $unreadNotification = $this->formatNotification($notification);
-                NewPostCreatedEvent::dispatch($unreadNotification);
+            //get the latest unreadnotification for the admin user
+            $latestNotification = $admin->unreadNotifications()->latest()->first();
+
+            if ($latestNotification) {
+                $formatedNotification = $this->formatNotification($latestNotification);
+
+                //dispatch realtime notification to admin
+                NewPostCreatedEvent::dispatch($formatedNotification);
             }
-        }
+        }   
     }
 
     public function getUnreadNotificationsForAdmin(): array|null
