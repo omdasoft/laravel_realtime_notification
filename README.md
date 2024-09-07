@@ -24,6 +24,7 @@ The project is: in progress
 * run composer install
 * run npm install
 * touch database/database.sqlite
+* run php artisan storage:link
 * run php artisan migrate fresh:--seed
 * run php artisan serve
 * run php artisan queue:work to start the queue
