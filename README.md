@@ -20,6 +20,7 @@ The project is: in progress
 * clone the project
 * cd inside the project
 * run cp .env.example .env
+* run php artisan key:generate
 * run composer install
 * run npm install
 * touch database/database.sqlite
