@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed, watch, onUnmounted } from "vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
@@ -7,6 +7,7 @@ import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Link, usePage, router } from "@inertiajs/vue3";
 import Notification from "@/Components/Notification.vue";
+import Echo from "laravel-echo";
 const showingNavigationDropdown = ref(false);
 
 const notifications = ref([]);
@@ -18,6 +19,12 @@ onMounted(() => {
         notifications.value.push(e.unreadNotifications);
     });
 })
+
+//remove the listener on component unmount
+onUnmounted(() => {
+  Echo.leave("admin-notifications");
+})
+
 </script>
 <template>
   <div>
